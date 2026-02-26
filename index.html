@@ -3,101 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mandafesto - Coming Soon</title>
-    <meta name="description" content="{{DESCRIPTION}}">
+    <title>Mandafesto — Amanda Bradford</title>
+    <meta name="description" content="The unfiltered writing of Amanda Bradford. Founder of The League, investor, builder.">
     <meta property="og:title" content="Mandafesto">
-    <meta property="og:description" content="{{DESCRIPTION}}">
+    <meta property="og:description" content="The unfiltered writing of Amanda Bradford.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://mandafesto.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;700&family=Sora:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: #0a0a0a;
-            color: #fff;
+            color: #e0e0e0;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+
+        /* Header / Nav */
+        .site-header {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 48px 24px 32px;
             text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
-        .container {
-            max-width: 560px;
-            width: 100%;
-            padding: 48px 24px;
-        }
-        .badge {
-            display: inline-block;
-            font-size: 0.7em;
-            letter-spacing: 0.15rem;
-            text-transform: uppercase;
-            color: #FFD700;
-            border: 1px solid #FFD700;
-            border-radius: 2rem;
-            padding: 6px 18px;
-            margin-bottom: 28px;
-            font-weight: 500;
-        }
-        .emoji-hero {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            line-height: 1;
-        }
-        h1 {
-            font-family: 'Sora', sans-serif;
-            font-size: clamp(2.5rem, 7vw, 4rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 16px;
+        .site-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
             background: linear-gradient(135deg, #FFD700, #f59e0b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 8px;
         }
-        .tagline {
-            color: rgba(255,255,255,0.7);
-            font-size: 1.1em;
-            line-height: 1.7;
-            font-weight: 300;
-            margin-bottom: 12px;
-            max-width: 460px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .pitch {
+        .site-subtitle {
             color: rgba(255,255,255,0.45);
-            font-size: 0.85em;
-            line-height: 1.6;
-            font-weight: 200;
-            margin-bottom: 36px;
-            max-width: 420px;
-            margin-left: auto;
-            margin-right: auto;
+            font-size: 0.9em;
+            font-weight: 300;
+            margin-bottom: 20px;
         }
-        .waitlist-form {
+        .subscribe-row {
             display: flex;
             gap: 8px;
-            max-width: 440px;
-            margin: 0 auto 12px;
+            max-width: 380px;
+            margin: 0 auto;
         }
-        .waitlist-form input[type="email"] {
+        .subscribe-row input {
             flex: 1;
-            padding: 14px 18px;
+            padding: 10px 16px;
             border-radius: 2rem;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
             color: #fff;
             font-family: 'Inter', sans-serif;
-            font-size: 0.875em;
-            font-weight: 300;
+            font-size: 0.8em;
             outline: none;
-            transition: border-color 0.25s;
         }
-        .waitlist-form input::placeholder { color: rgba(255,255,255,0.3); }
-        .waitlist-form input:focus { border-color: #FFD700; }
-        .waitlist-form button {
-            padding: 14px 28px;
+        .subscribe-row input::placeholder { color: rgba(255,255,255,0.25); }
+        .subscribe-row input:focus { border-color: #FFD700; }
+        .subscribe-row button {
+            padding: 10px 20px;
             border-radius: 2rem;
             border: none;
             background: #FFD700;
@@ -105,50 +70,248 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.75em;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.15rem;
             cursor: pointer;
-            transition: opacity 0.25s, transform 0.25s;
             white-space: nowrap;
+            transition: opacity 0.2s;
         }
-        .waitlist-form button:hover { opacity: 0.9; transform: scale(1.04); }
-        .waitlist-form button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-        .form-msg {
-            font-size: 0.8em;
+        .subscribe-row button:hover { opacity: 0.85; }
+        .subscribe-row button:disabled { opacity: 0.4; }
+        .sub-msg {
+            font-size: 0.75em;
+            min-height: 1.2em;
+            margin-top: 8px;
             font-weight: 300;
-            min-height: 1.4em;
-            margin-bottom: 40px;
         }
-        .form-msg.success { color: #4ade80; }
-        .form-msg.error { color: #f87171; }
-        .footer {
+        .sub-msg.success { color: #4ade80; }
+        .sub-msg.error { color: #f87171; }
+
+        /* Posts */
+        .posts {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .post {
+            padding: 48px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .post-meta {
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            margin-bottom: 12px;
+            font-weight: 400;
+        }
+        .post-tag {
+            display: inline-block;
+            background: rgba(255,215,0,0.1);
+            color: #FFD700;
+            padding: 2px 10px;
+            border-radius: 1rem;
+            font-size: 0.7em;
+            font-weight: 500;
+            margin-right: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08rem;
+        }
+        .post h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+        .post-excerpt {
+            font-size: 1em;
+            line-height: 1.85;
+            font-weight: 300;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 20px;
+        }
+        .post-body {
+            font-size: 1em;
+            line-height: 1.9;
+            font-weight: 300;
+            color: rgba(255,255,255,0.75);
+        }
+        .post-body p { margin-bottom: 1.4em; }
+        .post-body blockquote {
+            border-left: 3px solid #FFD700;
+            padding-left: 20px;
+            margin: 1.8em 0;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.1em;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+        }
+        .post-body strong {
+            color: #fff;
+            font-weight: 500;
+        }
+        .post-body em {
+            font-style: italic;
+            color: rgba(255,255,255,0.85);
+        }
+        .post-body a {
+            color: #FFD700;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,215,0,0.3);
+            transition: border-color 0.2s;
+        }
+        .post-body a:hover { border-color: #FFD700; }
+        .read-toggle {
+            display: inline-block;
+            color: #FFD700;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            padding: 0;
+            transition: opacity 0.2s;
+        }
+        .read-toggle:hover { opacity: 0.7; }
+        .post-body.collapsed { display: none; }
+
+        /* Footer */
+        .site-footer {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            text-align: center;
             color: rgba(255,255,255,0.2);
             font-size: 0.75em;
-            font-weight: 200;
         }
+        .site-footer a { color: rgba(255,255,255,0.35); text-decoration: none; }
+        .site-footer a:hover { color: #FFD700; }
+
         @media (max-width: 480px) {
-            .waitlist-form { flex-direction: column; }
-            .waitlist-form button { width: 100%; }
+            .subscribe-row { flex-direction: column; }
+            .subscribe-row button { width: 100%; }
+            .post h2 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="badge">Coming Soon</div>
-        <div class="emoji-hero">📖</div>
-        <h1>Mandafesto</h1>
-        <p class="tagline">The unfiltered story of building, selling, and starting over.</p>
-        <p class="pitch">Amanda Bradford's manifesto — from solo-founding The League to a $30M exit to figuring out what comes next. The book, the blog, the raw truth.</p>
-        <form class="waitlist-form" id="wf" onsubmit="return sub(event)">
-            <input type="email" id="em" placeholder="Enter your email" required autocomplete="email">
-            <button type="submit" id="btn">Get Notified</button>
+    <header class="site-header">
+        <h1 class="site-title">Mandafesto</h1>
+        <p class="site-subtitle">The unfiltered writing of Amanda Bradford</p>
+        <form class="subscribe-row" id="wf" onsubmit="return sub(event)">
+            <input type="email" id="em" placeholder="Subscribe for new posts" required>
+            <button type="submit" id="btn">Subscribe</button>
         </form>
-        <p class="form-msg" id="msg"></p>
-        <p class="footer">© 2026 Mandafesto</p>
-    </div>
+        <p class="sub-msg" id="msg"></p>
+    </header>
+
+    <main class="posts">
+        <!-- POST 1: Alpha Female -->
+        <article class="post">
+            <div class="post-meta">
+                <span class="post-tag">Manifesto</span>
+                October 22, 2015
+            </div>
+            <h2>I'm Not An Elitist, I'm An Alpha Female</h2>
+            <p class="post-excerpt">In less than a month from today The League turns 1 and I turn 31. As I reflect back on my first year as a single founder, my biggest regret is that for nearly a year I've held my tongue on voicing the mission behind The League.</p>
+            <button class="read-toggle" onclick="togglePost(this)">Read more →</button>
+            <div class="post-body collapsed">
+                <p>I told myself I was just obeying wise adages: 'ignore the critics', 'focus on your users and your product', and 'no press is bad press', but by refusing to respond, I essentially let the media go on to corrupt our concept into one so superficial and optimized for clickbait that it's nearly unrecognizable to me now.</p>
+
+                <p>Why did I hold back? Truthfully, I was worried that if I shared my real vision behind The League I would alienate some of our user base — particularly the men — which a dating app clearly needs to survive. This, in turn, could further segment our already-smaller-than-Tinder addressable market, and could hurt our chances at getting traction and raising funding. But ironically, by downplaying my mission, I was actually suffering from the very same type of complex I am determined to eradicate.</p>
+
+                <p><strong>And at 31, it's time for me to stop worrying about what other people think and start worrying about moving the needle.</strong></p>
+
+                <p>So if you'll bear with me while I get on my soapbox for a few minutes, I'd like to finally explain why I started The League.</p>
+
+                <p>When I got an academic scholarship to Carnegie Mellon to study computer science, I never thought twice about how education and career would affect my dating life. I worked incredibly hard to graduate early and build my resume, network, and pedigree working in all-male teams at name-brand tech companies. After finishing it all off with an MBA, I started to realize that with every promotion or degree I collected, I embodied more and more the definition of 'alpha female'.</p>
+
+                <p>After business school, I entered back into the world of singledom after the end of a 5 year relationship. It became clear that I had effectively qualified out a large pool of guys that were simply not interested in dating an alpha female;</p>
+
+                <p><em>I was an over-educated, career-obsessed wanna-be tech executive with little interest in playing the 'traditional' doting girlfriend.</em></p>
+
+                <p>And to be fair, I qualified out guys that didn't share my same drive to achieve, level of intellect, or desire to be in a relationship where our careers and social lives were of equal importance. It only took me a few dates 'in the wild' to realize that the typical online dating sites were a waste of my — and their — time. And when you're $200,000 in debt after business school, you tend to place a high dollar value on your time.</p>
+
+                <p><strong>It became clear to me that as far as women have come in redefining our role in the workplace, there is much work left to do in redefining our role in relationships.</strong></p>
+
+                <p>In 2015, there are many men who will claim they want a 'smart, ambitious woman', but I've noticed it often doesn't play out that way in reality. An HBR study finds that 50% of millennial men expect their wife's career to take a back-seat to theirs, and nearly 70% expect the wife to be the primary caretaker of their children. A University of Chicago study shows a woman and man are much less likely to pair up if her income exceeds his. All of this points to why it's not uncommon for women to feel the need to <em>tone down their intelligence, opinions, and career ambition as to not scare guys off.</em></p>
+
+                <p>This awful, cringeworthy expression is what drove me to create The League. I wanted to build a community where smart, outspoken, high-achieving women are celebrated and encouraged to progress in their career full-time. I wanted to never EVER hear a woman be worried that her educational achievements or career ambition would be a turn-off.</p>
+
+                <blockquote>"The most important career choice you'll make is who you marry. When it comes time to settle down, find someone who wants an equal partner." — Sheryl Sandberg</blockquote>
+
+                <p>I wanted to build a community where this type of relationship is the rule, not the exception.</p>
+
+                <p>The media has slammed The League for our 'exclusive' model and labeled us an elitist app for trust fund kids and ivy league grads. My inbox flooded with dozens of reality-show production companies pitching us to create the next Millionaire Matchmaker, type-casting me as the millennial's Patti Stranger whose goal is to match up rich men with gorgeous women desiring financial security. <strong>These stereotypes make my blood boil and couldn't be more wrong.</strong></p>
+
+                <p>The women in The League have consciously prioritized their education and career trajectory: 98% have college degrees, 8% are PhDs, 30% have advanced degrees, 14% are director-level or higher, 21% are managers, 13% are CEOs, founders, co-founders or owners, and over 39% are estimated to be making six figure salaries. And this is all with an average female age of 29.</p>
+
+                <p><strong>What at first glance is easy to label as elitism is actually efficacy of this broader mission.</strong></p>
+
+                <p>The couples that we create, even if small in absolute numbers right now, ideally will go on to successfully demonstrate that dual-career relationships are not only possible, they are preferable. These power couples will ultimately serve as the role models that our society sorely lacks today.</p>
+
+                <p>My hope is that The League promotes higher education, encourages career-ambition, and, most importantly, cultivates the desire for an egalitarian relationship in both sexes.</p>
+
+                <p>If as a founder I can point to even a small increase in the number of equal partnerships that result from the curated community we're building, then I'm okay being labeled an elitist, or whatever anyone wants to call me. Because if we can help move the needle of society, even a tiny bit, towards equalism, that is much more important to me than my own google search results.</p>
+
+                <p><em>Amanda Bradford, Founder & CEO</em></p>
+            </div>
+        </article>
+
+        <!-- POST 2: Fortune -->
+        <article class="post">
+            <div class="post-meta">
+                <span class="post-tag">Career</span>
+                December 2023
+            </div>
+            <h2>How I Went From $200K in Debt to Making My First Million</h2>
+            <p class="post-excerpt">Fortune's "How I Made My First Million" series. The full story of building The League from $0 to $16M revenue as a solo founder with only $2.3M raised — and the $200K in Stanford MBA debt that almost stopped me.</p>
+            <a href="https://fortune.com/2023/12/23/how-amanda-bradford-dating-app-league-founder-became-millionaire/" target="_blank" class="read-toggle">Read on Fortune →</a>
+        </article>
+
+        <!-- POST 3: Forbes -->
+        <article class="post">
+            <div class="post-meta">
+                <span class="post-tag">Interview</span>
+                September 2023
+            </div>
+            <h2>First Intimate Interview Since the $30 Million Match Group Acquisition</h2>
+            <p class="post-excerpt">Forbes sits down for the first deep interview since selling The League. On building the only dating app designed and coded entirely by a woman, the acquisition journey, and what comes next.</p>
+            <a href="https://forbes.com/sites/meimeifox/2023/09/18/first-intimate-interview-with-the-league-founder-amanda-bradford-since-30-million-match-group-acquisition/" target="_blank" class="read-toggle">Read on Forbes →</a>
+        </article>
+
+        <!-- POST 4: Free Agent -->
+        <article class="post">
+            <div class="post-meta">
+                <span class="post-tag">Update</span>
+                August 2025
+            </div>
+            <h2>I'm a Free Agent</h2>
+            <p class="post-excerpt">After spending the last decade of my life serving as Founder & CEO of The League, my non-compete has ended and I have left Match Group. What comes next? Everything.</p>
+            <a href="https://www.globaldatinginsights.com/featured/the-league-ceo-amanda-bradford-departs-match-group/" target="_blank" class="read-toggle">Read on GDI →</a>
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 Amanda Bradford · <a href="https://amandabradford.com">amandabradford.com</a> · <a href="https://twitter.com/amandabradford">@amandabradford</a></p>
+    </footer>
+
     <script>
+        function togglePost(btn) {
+            const body = btn.nextElementSibling;
+            if (body.classList.contains('collapsed')) {
+                body.classList.remove('collapsed');
+                btn.textContent = 'Collapse ↑';
+            } else {
+                body.classList.add('collapsed');
+                btn.textContent = 'Read more →';
+            }
+        }
+
         const S='https://kxyqdzkoyuzszcyfvpee.supabase.co',K='sb_publishable_aXDS4SvG7aMZKExyNPTbgA_mBzZdQZU',N='Mandafesto';
-        async function sub(e){e.preventDefault();const b=document.getElementById('btn'),m=document.getElementById('msg'),v=document.getElementById('em').value.trim();if(!v)return!1;b.disabled=!0;b.textContent='...';m.textContent='';m.className='form-msg';try{const r=await fetch(S+'/rest/v1/waitlist',{method:'POST',headers:{'apikey':K,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({email:v,site_url:location.href,site_name:N})});if(r.ok){m.textContent="You're on the list! We'll be in touch.";m.className='form-msg success';document.getElementById('em').value='';}else if(r.status===409){m.textContent="You're already on the list!";m.className='form-msg success';}else throw 0;}catch(x){m.textContent='Something went wrong. Please try again.';m.className='form-msg error';}b.disabled=!1;b.textContent='Get Notified';return!1;}
+        async function sub(e){e.preventDefault();const b=document.getElementById('btn'),m=document.getElementById('msg'),v=document.getElementById('em').value.trim();if(!v)return!1;b.disabled=!0;b.textContent='...';m.textContent='';m.className='sub-msg';try{const r=await fetch(S+'/rest/v1/waitlist',{method:'POST',headers:{'apikey':K,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({email:v,site_url:location.href,site_name:N})});if(r.ok){m.textContent="Subscribed! You'll get new posts.";m.className='sub-msg success';document.getElementById('em').value='';}else if(r.status===409){m.textContent="You're already subscribed!";m.className='sub-msg success';}else throw 0;}catch(x){m.textContent='Something went wrong. Try again.';m.className='sub-msg error';}b.disabled=!1;b.textContent='Subscribe';return!1;}
     </script>
 </body>
 </html>
