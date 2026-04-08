@@ -1,5 +1,6 @@
 -- Mandafesto Admin Magic Link Authentication
 -- Run this in your Supabase SQL Editor to set up the magic link system
+-- This adds admin tables to your existing project with the 'waitlist' table
 
 -- Create magic links table
 CREATE TABLE IF NOT EXISTS magic_links (
@@ -17,6 +18,15 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
     session_token TEXT UNIQUE NOT NULL,
     email TEXT NOT NULL,
     expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '7 days'),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Ensure waitlist table exists with proper structure (may already exist)
+CREATE TABLE IF NOT EXISTS waitlist (
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL,
+    site_url TEXT,
+    site_name TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -161,9 +171,14 @@ GRANT EXECUTE ON FUNCTION verify_session TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION cleanup_auth_tables TO authenticated;
 
 -- Row Level Security (RLS) policies
+ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
 ALTER TABLE magic_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
+
+-- Allow public access to waitlist (for signups)
+CREATE POLICY "Allow waitlist signups" ON waitlist FOR INSERT TO anon, authenticated WITH CHECK (TRUE);
+CREATE POLICY "Allow Amanda to view waitlist" ON waitlist FOR SELECT TO authenticated USING (TRUE);
 
 -- Allow read access to magic_links for verification
 CREATE POLICY "Allow magic link verification" ON magic_links FOR SELECT TO anon, authenticated USING (TRUE);
@@ -173,6 +188,13 @@ CREATE POLICY "Allow session verification" ON admin_sessions FOR SELECT TO anon,
 CREATE POLICY "Only Amanda can manage posts" ON blog_posts FOR ALL TO authenticated 
 USING (author_email IN ('amanda.bradford@gmail.com', 'pearlouise.bradford@gmail.com'));
 
+-- Check existing tables first
+-- SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+-- SELECT COUNT(*) FROM waitlist; -- Check current signups
+
 -- Test the functions (remove in production)
 -- SELECT send_magic_link('amanda.bradford@gmail.com');
 -- SELECT verify_magic_link('test-token');
+
+-- Quick test to see all your tables after setup:
+-- \dt

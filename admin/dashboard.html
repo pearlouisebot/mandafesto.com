@@ -369,8 +369,8 @@
 
         async function loadStats() {
             try {
-                // Load subscriber count from Supabase
-                const response = await fetch('https://kxyqdzkoyuzszcyfvpee.supabase.co/rest/v1/waitlist?select=count', {
+                // Load subscriber count from existing waitlist table
+                const response = await fetch('https://kxyqdzkoyuzszcyfvpee.supabase.co/rest/v1/waitlist?select=email', {
                     headers: {
                         'apikey': 'sb_publishable_aXDS4SvG7aMZKExyNPTbgA_mBzZdQZU',
                         'Content-Type': 'application/json'
