@@ -1,6 +1,17 @@
 # Cache control for Mandafesto
 # Prevent caching of HTML files for immediate updates
 
+# Extra aggressive cache-busting for main page
+<Files "index.html">
+    Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+    Header set Last-Modified "Thu, 01 Jan 1970 00:00:00 GMT"
+    Header unset ETag
+    FileETag None
+</Files>
+
+# All HTML files
 <FilesMatch "\.(html|htm)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"

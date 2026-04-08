@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mandafesto — Amanda Bradford</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Expires" content="Thu, 01 Jan 1970 00:00:00 GMT">
+    <meta name="cache-buster" content="v1737045120">
+    <meta name="last-modified" content="Thu, 01 Jan 1970 00:00:00 GMT">
     <meta name="description" content="The unfiltered writing of Amanda Bradford. Founder of The League, investor, builder.">
     <meta property="og:title" content="Mandafesto">
     <meta property="og:description" content="The unfiltered writing of Amanda Bradford.">
@@ -300,7 +302,7 @@
     </main>
 
     <footer class="site-footer">
-        <p>© 2026 Amanda Bradford · <a href="https://amandabradford.com">amandabradford.com</a> · <a href="https://twitter.com/amandabradford">@amandabradford</a> · <a href="./admin">admin</a></p>
+        <p>© 2026 Amanda Bradford · <a href="https://amandabradford.com">amandabradford.com</a> · <a href="https://twitter.com/amandabradford">@amandabradford</a> · <a href="./admin">admin</a> · <a href="#" onclick="clearCache(); return false;" style="opacity: 0.7; font-size: 0.8em;">clear cache</a></p>
     </footer>
 
     <script>
@@ -318,15 +320,71 @@
         const S='https://kxyqdzkoyuzszcyfvpee.supabase.co',K='sb_publishable_aXDS4SvG7aMZKExyNPTbgA_mBzZdQZU',N='Mandafesto';
         async function sub(e){e.preventDefault();const b=document.getElementById('btn'),m=document.getElementById('msg'),v=document.getElementById('em').value.trim();if(!v)return!1;b.disabled=!0;b.textContent='...';m.textContent='';m.className='sub-msg';try{const r=await fetch(S+'/rest/v1/waitlist',{method:'POST',headers:{'apikey':K,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({email:v,site_url:location.href,site_name:N})});if(r.ok){m.textContent="Subscribed! You'll get new posts.";m.className='sub-msg success';document.getElementById('em').value='';}else if(r.status===409){m.textContent="You're already subscribed!";m.className='sub-msg success';}else throw 0;}catch(x){m.textContent='Something went wrong. Try again.';m.className='sub-msg error';}b.disabled=!1;b.textContent='Subscribe';return!1;}
 
-        // Cache-busting for admin links
+        // Aggressive cache-busting for main page
         document.addEventListener('DOMContentLoaded', function() {
+            // Add timestamp to all internal links
             const adminLinks = document.querySelectorAll('a[href*="admin"]');
             adminLinks.forEach(link => {
                 if (link.href.indexOf('?') === -1) {
                     link.href += '?v=' + Date.now();
                 }
             });
+
+            // Force reload if this page is cached (check for old timestamp)
+            const buildTime = 1737045000; // Update this timestamp when deploying
+            const now = Math.floor(Date.now() / 1000);
+            if (now - buildTime > 300 && !sessionStorage.getItem('force_reloaded')) {
+                sessionStorage.setItem('force_reloaded', 'true');
+                window.location.reload(true);
+            }
+
+            // Prevent browser back/forward cache
+            window.addEventListener('pageshow', function(e) {
+                if (e.persisted) {
+                    window.location.reload(true);
+                }
+            });
+
+            // Register service worker for aggressive caching control
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+                    .then(function(registration) {
+                        console.log('SW registered:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('SW registration failed:', error);
+                    });
+            }
         });
+
+        // Manual cache clearing function
+        function clearCache() {
+            // Clear all storage
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            
+            // Clear browser caches
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) {
+                        caches.delete(name);
+                    });
+                });
+            }
+            
+            // Clear storage
+            sessionStorage.clear();
+            localStorage.removeItem('mandafesto_cache_bust');
+            
+            // Force reload with cache bypass
+            alert('Cache cleared! Page will reload fresh.');
+            window.location.reload(true);
+        }
     </script>
 </body>
 </html>
