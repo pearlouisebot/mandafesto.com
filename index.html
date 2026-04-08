@@ -207,6 +207,8 @@
         <p class="site-subtitle">The unfiltered writing of Amanda Bradford</p>
         <form class="subscribe-row" id="wf" onsubmit="return sub(event)">
             <input type="email" id="em" placeholder="Subscribe for new posts" required>
+            <!-- Honeypot for bots -->
+            <input type="text" id="honeypot" style="display: none !important; position: absolute; left: -9999px;" tabindex="-1" autocomplete="off">
             <button type="submit" id="btn">Subscribe</button>
         </form>
         <p class="sub-msg" id="msg"></p>
@@ -318,7 +320,69 @@
         }
 
         const S='https://kxyqdzkoyuzszcyfvpee.supabase.co',K='sb_publishable_aXDS4SvG7aMZKExyNPTbgA_mBzZdQZU',N='Mandafesto';
-        async function sub(e){e.preventDefault();const b=document.getElementById('btn'),m=document.getElementById('msg'),v=document.getElementById('em').value.trim();if(!v)return!1;b.disabled=!0;b.textContent='...';m.textContent='';m.className='sub-msg';try{const r=await fetch(S+'/rest/v1/waitlist',{method:'POST',headers:{'apikey':K,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({email:v,site_url:location.href,site_name:N})});if(r.ok){m.textContent="Subscribed! You'll get new posts.";m.className='sub-msg success';document.getElementById('em').value='';}else if(r.status===409){m.textContent="You're already subscribed!";m.className='sub-msg success';}else throw 0;}catch(x){m.textContent='Something went wrong. Try again.';m.className='sub-msg error';}b.disabled=!1;b.textContent='Subscribe';return!1;}
+        
+        // Bot detection
+        let formLoadTime = Date.now();
+        let interactionCount = 0;
+        document.addEventListener('mousemove', () => interactionCount++);
+        document.addEventListener('keyup', () => interactionCount++);
+        
+        async function sub(e){
+            e.preventDefault();
+            const b=document.getElementById('btn'),m=document.getElementById('msg'),v=document.getElementById('em').value.trim();
+            
+            // Bot checks
+            const honeypot = document.getElementById('honeypot').value;
+            const timeFast = (Date.now() - formLoadTime) < 3000; // Too fast
+            const noInteraction = interactionCount < 2;
+            const badEmail = !v.includes('@') || v.includes('.ru') || v.includes('temp') || /[0-9]{4}/.test(v);
+            
+            if(honeypot || timeFast || noInteraction || badEmail || !v) {
+                m.textContent='Please try again slower.';
+                m.className='sub-msg error';
+                return false;
+            }
+            
+            // Check if legitimate email domain
+            const domain = v.split('@')[1];
+            const suspisciousDomains = ['10minutemail', 'tempmail', 'guerrillamail', 'mailinator'];
+            if(suspisciousDomains.some(d => domain?.includes(d))) {
+                m.textContent='Please use a permanent email address.';
+                m.className='sub-msg error';
+                return false;
+            }
+            
+            b.disabled=!0;b.textContent='...';m.textContent='';m.className='sub-msg';
+            
+            try{
+                const r=await fetch(S+'/rest/v1/waitlist',{
+                    method:'POST',
+                    headers:{'apikey':K,'Content-Type':'application/json','Prefer':'return=minimal'},
+                    body:JSON.stringify({
+                        email:v,
+                        site_url:location.href,
+                        site_name:N,
+                        user_agent: navigator.userAgent.substring(0,100),
+                        timestamp: Date.now()
+                    })
+                });
+                
+                if(r.ok){
+                    m.textContent="Subscribed! You'll get new posts.";
+                    m.className='sub-msg success';
+                    document.getElementById('em').value='';
+                }else if(r.status===409){
+                    m.textContent="You're already subscribed!";
+                    m.className='sub-msg success';
+                }else throw 0;
+            }catch(x){
+                m.textContent='Something went wrong. Try again.';
+                m.className='sub-msg error';
+            }
+            
+            b.disabled=!1;b.textContent='Subscribe';
+            return!1;
+        }
 
         // Aggressive cache-busting for main page
         document.addEventListener('DOMContentLoaded', function() {
