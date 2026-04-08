@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mandafesto — Amanda Bradford</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="description" content="The unfiltered writing of Amanda Bradford. Founder of The League, investor, builder.">
     <meta property="og:title" content="Mandafesto">
     <meta property="og:description" content="The unfiltered writing of Amanda Bradford.">
@@ -314,6 +317,16 @@
 
         const S='https://kxyqdzkoyuzszcyfvpee.supabase.co',K='sb_publishable_aXDS4SvG7aMZKExyNPTbgA_mBzZdQZU',N='Mandafesto';
         async function sub(e){e.preventDefault();const b=document.getElementById('btn'),m=document.getElementById('msg'),v=document.getElementById('em').value.trim();if(!v)return!1;b.disabled=!0;b.textContent='...';m.textContent='';m.className='sub-msg';try{const r=await fetch(S+'/rest/v1/waitlist',{method:'POST',headers:{'apikey':K,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({email:v,site_url:location.href,site_name:N})});if(r.ok){m.textContent="Subscribed! You'll get new posts.";m.className='sub-msg success';document.getElementById('em').value='';}else if(r.status===409){m.textContent="You're already subscribed!";m.className='sub-msg success';}else throw 0;}catch(x){m.textContent='Something went wrong. Try again.';m.className='sub-msg error';}b.disabled=!1;b.textContent='Subscribe';return!1;}
+
+        // Cache-busting for admin links
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminLinks = document.querySelectorAll('a[href*="admin"]');
+            adminLinks.forEach(link => {
+                if (link.href.indexOf('?') === -1) {
+                    link.href += '?v=' + Date.now();
+                }
+            });
+        });
     </script>
 </body>
 </html>
