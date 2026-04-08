@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Mandafesto Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .admin-header {
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 20px 0;
+        }
+
+        .admin-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn:hover { opacity: 0.8; }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.6);
+            font-weight: 300;
+        }
+
+        .posts-section {
+            margin-top: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .post-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .post-meta {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
+        }
+
+        .post-excerpt {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.75em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .empty-state h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        @media (max-width: 768px) {
+            .admin-nav {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .admin-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .post-item {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .post-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <nav class="admin-nav">
+            <h1 class="admin-title">Mandafesto Admin</h1>
+            <div class="admin-actions">
+                <a href="./editor.html" class="btn btn-primary">Write New Post</a>
+                <a href="../" class="btn btn-secondary">View Site</a>
+                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalPosts">-</div>
+                <div class="stat-label">Total Posts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalSubscribers">-</div>
+                <div class="stat-label">Subscribers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="lastPostDays">-</div>
+                <div class="stat-label">Days Since Last Post</div>
+            </div>
+        </div>
+
+        <section class="posts-section">
+            <div class="section-header">
+                <h2 class="section-title">Your Posts</h2>
+                <a href="./editor.html" class="btn btn-primary">Write New Post</a>
+            </div>
+            
+            <div id="postsContainer" class="loading">
+                Loading posts...
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Auth check
+        const token = localStorage.getItem('mandafesto_auth_token');
+        if (!token) {
+            window.location.href = './index.html';
+        }
+
+        // Load dashboard data
+        loadDashboard();
+
+        async function loadDashboard() {
+            try {
+                await Promise.all([
+                    loadPosts(),
+                    loadStats()
+                ]);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        async function loadPosts() {
+            const container = document.getElementById('postsContainer');
+            
+            try {
+                // For now, we'll use hardcoded posts from the main site
+                // In production, this would fetch from an API or JSON file
+                const posts = [
+                    {
+                        id: 1,
+                        title: "I'm Not An Elitist, I'm An Alpha Female",
+                        date: "2015-10-22",
+                        category: "Manifesto",
+                        excerpt: "In less than a month from today The League turns 1 and I turn 31. As I reflect back on my first year as a single founder, my biggest regret is that for nearly a year I've held my tongue on voicing the mission behind The League.",
+                        status: "published",
+                        type: "original"
+                    },
+                    {
+                        id: 2,
+                        title: "First Intimate Interview Since the $30 Million Match Group Acquisition",
+                        date: "2023-09-01",
+                        category: "Interview",
+                        excerpt: "Forbes sits down for the first deep interview since selling The League. On building the only dating app designed and coded entirely by a woman, the acquisition journey, and what comes next.",
+                        status: "published",
+                        type: "link",
+                        url: "https://forbes.com/sites/meimeifox/2023/09/18/first-intimate-interview-with-the-league-founder-amanda-bradford-since-30-million-match-group-acquisition/"
+                    },
+                    {
+                        id: 3,
+                        title: "How I Went From $200K in Debt to Making My First Million",
+                        date: "2023-12-23",
+                        category: "Career",
+                        excerpt: "Fortune's \"How I Made My First Million\" series. The full story of building The League from $0 to $16M revenue as a solo founder with only $2.3M raised — and the $200K in Stanford MBA debt that almost stopped me.",
+                        status: "published",
+                        type: "link",
+                        url: "https://fortune.com/2023/12/23/how-amanda-bradford-dating-app-league-founder-became-millionaire/"
+                    },
+                    {
+                        id: 4,
+                        title: "I'm a Free Agent",
+                        date: "2025-08-01",
+                        category: "Update",
+                        excerpt: "After spending the last decade of my life serving as Founder & CEO of The League, my non-compete has ended and I have left Match Group. What comes next? Everything.",
+                        status: "published",
+                        type: "link",
+                        url: "https://www.globaldatinginsights.com/featured/the-league-ceo-amanda-bradford-departs-match-group/"
+                    }
+                ];
+
+                if (posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No posts yet</h3>
+                            <p>Ready to share your thoughts with the world?</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="posts-list">
+                            ${posts.map(post => `
+                                <div class="post-item">
+                                    <div class="post-info">
+                                        <div class="post-title">${post.title}</div>
+                                        <div class="post-meta">
+                                            ${post.category} · ${new Date(post.date).toLocaleDateString()} · ${post.status}
+                                        </div>
+                                        <div class="post-excerpt">${post.excerpt}</div>
+                                    </div>
+                                    <div class="post-actions">
+                                        ${post.type === 'original' ? 
+                                            `<a href="./editor.html?id=${post.id}" class="btn btn-secondary btn-small">Edit</a>` :
+                                            `<a href="${post.url}" target="_blank" class="btn btn-secondary btn-small">View</a>`
+                                        }
+                                        <button onclick="deletePost(${post.id})" class="btn btn-secondary btn-small">Delete</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                document.getElementById('totalPosts').textContent = posts.length;
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error loading posts</h3>
+                        <p>Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                // Load subscriber count from Supabase
+                const response = await fetch('https://kxyqdzkoyuzszcyfvpee.supabase.co/rest/v1/waitlist?select=count', {
+                    headers: {
+                        'apikey': 'sb_publishable_aXDS4SvG7aMZKExyNPTbgA_mBzZdQZU',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('totalSubscribers').textContent = data.length || 0;
+                }
+
+                // Calculate days since last post
+                const lastPostDate = new Date('2025-08-01');
+                const today = new Date();
+                const daysSince = Math.floor((today - lastPostDate) / (1000 * 60 * 60 * 24));
+                document.getElementById('lastPostDays').textContent = daysSince;
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function deletePost(id) {
+            if (confirm('Are you sure you want to delete this post?')) {
+                // TODO: Implement post deletion
+                alert('Post deletion not yet implemented');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('mandafesto_auth_token');
+            localStorage.removeItem('mandafesto_auth_expires');
+            window.location.href = './index.html';
+        }
+    </script>
+</body>
+</html>

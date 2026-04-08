@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Post — Mandafesto Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .editor-header {
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .editor-nav {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn:hover { opacity: 0.8; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .editor-main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+        }
+
+        .editor-content {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .post-meta-form {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 0.85em;
+            font-weight: 500;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .form-input {
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus { border-color: #FFD700; }
+        .form-input::placeholder { color: rgba(255,255,255,0.3); }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-select {
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            outline: none;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 600px;
+            padding: 24px;
+            border: none;
+            background: transparent;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.8;
+            outline: none;
+            resize: vertical;
+        }
+
+        .editor-textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+        .editor-sidebar {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-content {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .word-count {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 8px;
+        }
+
+        .preview-mode {
+            padding: 24px;
+            background: transparent;
+            min-height: 600px;
+        }
+
+        .preview-mode h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+
+        .preview-mode p {
+            font-size: 1rem;
+            line-height: 1.85;
+            font-weight: 300;
+            color: rgba(255,255,255,0.75);
+            margin-bottom: 1.4em;
+        }
+
+        .preview-mode blockquote {
+            border-left: 3px solid #FFD700;
+            padding-left: 20px;
+            margin: 1.8em 0;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.1em;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+        }
+
+        .preview-mode strong {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .preview-mode em {
+            font-style: italic;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .save-status {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .save-status.saving { color: #f59e0b; }
+        .save-status.saved { color: #4ade80; }
+        .save-status.error { color: #f87171; }
+
+        @media (max-width: 768px) {
+            .editor-main {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .editor-nav {
+                flex-direction: column;
+                gap: 12px;
+                padding: 16px 16px;
+            }
+
+            .editor-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="editor-header">
+        <nav class="editor-nav">
+            <div class="editor-title" id="editorTitle">New Post</div>
+            <div class="editor-actions">
+                <button onclick="togglePreview()" class="btn btn-secondary" id="previewBtn">Preview</button>
+                <button onclick="saveDraft()" class="btn btn-secondary" id="saveBtn">Save Draft</button>
+                <button onclick="publishPost()" class="btn btn-primary" id="publishBtn">Publish</button>
+                <a href="./dashboard.html" class="btn btn-secondary">Back</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="editor-main">
+        <div class="editor-content">
+            <div class="post-meta-form">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" id="postTitle" placeholder="Your post title..." maxlength="100">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="postCategory">
+                            <option value="Manifesto">Manifesto</option>
+                            <option value="Career">Career</option>
+                            <option value="Dating">Dating</option>
+                            <option value="Investing">Investing</option>
+                            <option value="Tech">Tech</option>
+                            <option value="Personal">Personal</option>
+                            <option value="Update">Update</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="postStatus">
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Excerpt</label>
+                    <textarea class="form-input form-textarea" id="postExcerpt" placeholder="A brief summary for the homepage..." maxlength="300"></textarea>
+                </div>
+            </div>
+
+            <div id="editorContainer">
+                <textarea 
+                    class="editor-textarea" 
+                    id="postContent" 
+                    placeholder="Start writing...
+
+Use **bold** and *italic* text.
+Use > for blockquotes.
+
+Write like you're talking to a friend. Share your thoughts, experiences, and insights. The world needs to hear your voice."
+                ></textarea>
+            </div>
+
+            <div id="previewContainer" style="display: none;">
+                <div class="preview-mode" id="previewContent">
+                    <h2 id="previewTitle">Your Post Title</h2>
+                    <div id="previewBody">Start writing to see the preview...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Publishing</div>
+                <div class="sidebar-content">
+                    <div>Status: <span id="statusDisplay">Draft</span></div>
+                    <div>Created: <span id="dateCreated">Now</span></div>
+                    <div class="save-status" id="saveStatus">Draft will auto-save</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Writing Stats</div>
+                <div class="sidebar-content">
+                    <div>Words: <span id="wordCount">0</span></div>
+                    <div>Characters: <span id="charCount">0</span></div>
+                    <div>Reading time: <span id="readTime">0 min</span></div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Tips</div>
+                <div class="sidebar-content">
+                    <ul style="list-style: none; padding: 0; line-height: 1.5;">
+                        <li>• Keep your title under 60 characters</li>
+                        <li>• Write a compelling excerpt</li>
+                        <li>• Use subheadings to break up text</li>
+                        <li>• Personal stories resonate best</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="./deploy.js"></script>
+    <script>
+        // Auth check
+        const token = localStorage.getItem('mandafesto_auth_token');
+        if (!token) {
+            window.location.href = './index.html';
+        }
+
+        // Editor state
+        let isPreview = false;
+        let currentPost = null;
+        
+        // Load post if editing
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+        if (postId) {
+            loadPost(postId);
+        }
+
+        // Auto-save functionality
+        let saveTimeout;
+        const SAVE_DELAY = 2000; // 2 seconds
+
+        // Event listeners
+        document.getElementById('postTitle').addEventListener('input', updatePreview);
+        document.getElementById('postContent').addEventListener('input', function() {
+            updatePreview();
+            updateStats();
+            autoSave();
+        });
+        document.getElementById('postExcerpt').addEventListener('input', updatePreview);
+        document.getElementById('postCategory').addEventListener('change', updatePreview);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveDraft();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                publishPost();
+            }
+        });
+
+        function loadPost(id) {
+            // TODO: Load post from storage
+            document.getElementById('editorTitle').textContent = 'Edit Post';
+            console.log('Loading post:', id);
+        }
+
+        function updateStats() {
+            const content = document.getElementById('postContent').value;
+            const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+            const chars = content.length;
+            const readTime = Math.max(1, Math.ceil(words / 200)); // 200 WPM
+
+            document.getElementById('wordCount').textContent = words;
+            document.getElementById('charCount').textContent = chars;
+            document.getElementById('readTime').textContent = readTime + ' min';
+        }
+
+        function updatePreview() {
+            if (!isPreview) return;
+
+            const title = document.getElementById('postTitle').value || 'Your Post Title';
+            const content = document.getElementById('postContent').value;
+
+            document.getElementById('previewTitle').textContent = title;
+            
+            // Simple markdown-like formatting
+            let html = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+                .split('\n\n')
+                .map(p => p.trim() ? `<p>${p}</p>` : '')
+                .join('');
+
+            document.getElementById('previewBody').innerHTML = html || 'Start writing to see the preview...';
+        }
+
+        function togglePreview() {
+            isPreview = !isPreview;
+            const editorContainer = document.getElementById('editorContainer');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewBtn = document.getElementById('previewBtn');
+
+            if (isPreview) {
+                editorContainer.style.display = 'none';
+                previewContainer.style.display = 'block';
+                previewBtn.textContent = 'Edit';
+                updatePreview();
+            } else {
+                editorContainer.style.display = 'block';
+                previewContainer.style.display = 'none';
+                previewBtn.textContent = 'Preview';
+            }
+        }
+
+        function autoSave() {
+            clearTimeout(saveTimeout);
+            const status = document.getElementById('saveStatus');
+            
+            saveTimeout = setTimeout(() => {
+                status.textContent = 'Saving...';
+                status.className = 'save-status saving';
+                
+                // Simulate save
+                setTimeout(() => {
+                    status.textContent = 'Draft saved';
+                    status.className = 'save-status saved';
+                }, 500);
+            }, SAVE_DELAY);
+        }
+
+        async function saveDraft() {
+            const post = getPostData();
+            post.status = 'draft';
+            post.author_email = 'amanda.bradford@gmail.com';
+            post.type = 'original';
+            
+            const status = document.getElementById('saveStatus');
+            status.textContent = 'Saving draft...';
+            status.className = 'save-status saving';
+            
+            try {
+                const result = await window.mandafestoAdmin.deployPost(post);
+                if (result.success) {
+                    status.textContent = 'Draft saved';
+                    status.className = 'save-status saved';
+                    
+                    // Update current post reference for future saves
+                    currentPost = result.post;
+                    
+                    // Update URL if this is a new post
+                    if (!postId && result.post.id) {
+                        window.history.replaceState({}, '', `?id=${result.post.id}`);
+                    }
+                } else {
+                    throw new Error(result.error || 'Unknown save error');
+                }
+            } catch (error) {
+                console.error('Error saving draft:', error);
+                status.textContent = 'Save failed';
+                status.className = 'save-status error';
+            }
+        }
+
+        async function publishPost() {
+            const post = getPostData();
+            
+            if (!post.title.trim()) {
+                alert('Please enter a title for your post.');
+                document.getElementById('postTitle').focus();
+                return;
+            }
+            
+            if (!post.content.trim()) {
+                alert('Please write some content for your post.');
+                document.getElementById('postContent').focus();
+                return;
+            }
+
+            if (!post.excerpt.trim()) {
+                alert('Please write an excerpt for your post.');
+                document.getElementById('postExcerpt').focus();
+                return;
+            }
+
+            const publishBtn = document.getElementById('publishBtn');
+            publishBtn.disabled = true;
+            publishBtn.textContent = 'Publishing...';
+            
+            try {
+                post.status = 'published';
+                post.publishedAt = new Date().toISOString();
+                post.author_email = 'amanda.bradford@gmail.com'; // From auth token
+                post.type = 'original';
+                
+                // Use the deploy script to publish
+                const result = await window.mandafestoAdmin.deployPost(post);
+                
+                if (result.success) {
+                    alert('Post published successfully! The site will update shortly.');
+                    window.location.href = './dashboard.html';
+                } else {
+                    throw new Error(result.error || 'Unknown deployment error');
+                }
+                
+            } catch (error) {
+                console.error('Error publishing post:', error);
+                alert(`Error publishing post: ${error.message}. Please try again.`);
+            } finally {
+                publishBtn.disabled = false;
+                publishBtn.textContent = 'Publish';
+            }
+        }
+
+        function getPostData() {
+            return {
+                id: postId || null,
+                title: document.getElementById('postTitle').value.trim(),
+                content: document.getElementById('postContent').value.trim(),
+                excerpt: document.getElementById('postExcerpt').value.trim(),
+                category: document.getElementById('postCategory').value,
+                status: document.getElementById('postStatus').value,
+                createdAt: currentPost?.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        // Initialize
+        updateStats();
+        document.getElementById('dateCreated').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+</html>
